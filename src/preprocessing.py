@@ -13,10 +13,34 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    df["claim_to_premium"] = df["claim_amount"] / (df["monthly_premium"] + 1e-6)
-    df["contact_per_tenure"] = df["support_contacts"] / (df["tenure_months"] + 1e-6)
-    df["premium_per_age"] = df["monthly_premium"] / (df["age"] + 1e-6)
-    df["claims_per_tenure"] = df["claims_count"] / (df["tenure_months"] + 1e-6)
+
+    premium_col = next((col for col in ["monthly_premium", "MonthlyCharges", "monthly_charges", "premium"] if col in df.columns), None)
+    claim_col = next((col for col in ["claim_amount", "TotalCharges", "total_charges", "claim_total"] if col in df.columns), None)
+    tenure_col = next((col for col in ["tenure_months", "tenure", "tenure_month"] if col in df.columns), None)
+    support_col = next((col for col in ["support_contacts", "contacts", "num_contacts"] if col in df.columns), None)
+    age_col = next((col for col in ["age", "SeniorCitizen", "senior_citizen", "age_years"] if col in df.columns), None)
+    claims_col = next((col for col in ["claims_count", "claim_count"] if col in df.columns), None)
+
+    if premium_col and claim_col:
+        df["claim_to_premium"] = df[claim_col] / (df[premium_col] + 1e-6)
+    else:
+        df["claim_to_premium"] = 0.0
+
+    if support_col and tenure_col:
+        df["contact_per_tenure"] = df[support_col] / (df[tenure_col] + 1e-6)
+    else:
+        df["contact_per_tenure"] = 0.0
+
+    if premium_col and age_col:
+        df["premium_per_age"] = df[premium_col] / (df[age_col] + 1e-6)
+    else:
+        df["premium_per_age"] = 0.0
+
+    if claims_col and tenure_col:
+        df["claims_per_tenure"] = df[claims_col] / (df[tenure_col] + 1e-6)
+    else:
+        df["claims_per_tenure"] = 0.0
+
     return df
 
 

@@ -82,6 +82,18 @@ def evaluate_models(models: dict[str, Any], X_test: Any, y_test: Any, feature_na
             plt.savefig(output_dir / f"feature_importance_{name}.png", dpi=180)
             plt.close()
 
+    metrics_df = pd.DataFrame(results).T
+    metrics_df.index.name = "model"
+    metrics_df = metrics_df[["accuracy", "auc", "pr_auc", "f1"]]
+    metrics_df.to_csv(output_dir / "metrics_summary.csv")
+
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(metrics_df.round(3), annot=True, cmap="viridis", fmt=".3f")
+    plt.title("Résumé des métriques par modèle")
+    plt.tight_layout()
+    plt.savefig(output_dir / "metrics_comparison.png", dpi=180)
+    plt.close()
+
     with (output_dir / "metrics.json").open("w", encoding="utf-8") as fh:
         json.dump(results, fh, indent=2)
 

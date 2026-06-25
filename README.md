@@ -23,7 +23,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Le pipeline génère automatiquement un dataset synthétique si aucun fichier n’est présent dans data/ puis exécute :
+Le pipeline utilise par défaut un jeu de données public de churn réel si le téléchargement est possible, sinon il bascule sur un dataset synthétique. Il exécute ensuite :
 - EDA descriptif (histogrammes, boxplots, heatmap)
 - Feature engineering
 - Entraînement de plusieurs modèles
